@@ -18,6 +18,7 @@ class CrosswordPattern():
 
     def __init__(self, pattern_string):
         self.rows = pattern_string.split('\n')
+        self.rows = [[char for char in row] for row in self.rows]
         self.size = len(self.rows)
         if self.size < MinimumAcceptedLength:
             raise Exception(
@@ -25,12 +26,10 @@ class CrosswordPattern():
         if self.size > MaximumAcceptedLength:
             raise Exception(
                 'Crossword pattern must have at most %s rows.', MaximumAcceptedLength)
-        self.cols = []
-
+        self.cols = [[] for i in range(self.size)]
         for i in range(self.size):
-            self.cols.append([])
-            for j in range(len(self.rows[i])):
-                self.cols[i].append(self.rows[i][j])
+            for j in range(self.size):
+                self.cols[j].append(self.rows[i][j])
 
         for row in self.rows:
             if len(self.rows) != self.size:
@@ -45,14 +44,14 @@ class CrosswordPattern():
             raise Exception(
                 'Invalid crossword pattern, each column must have the same length')
     
-    def draw(self):
-        for row in self.rows:
+    def draw(self, direction='horizontal'):
+        matrix_to_draw = [[]]
+        if direction == 'horizontal':
+            matrix_to_draw = self.rows
+        else:
+            matrix_to_draw = self.cols
+        for row in matrix_to_draw:
             print(row)
-        print()
-        for col in self.cols:
-            print(col)
-        print()
-
 
 class CrossWordLetter():
     __character = ''
@@ -73,6 +72,12 @@ class CrossWordLetter():
 
     def is_filled(self):
         return self.__character != ' '
+    
+    def is_found(self):
+        return is_alpha(self.__character)
+    
+    def is_block(self):
+        return self.__character == '#'
     
     def get_character(self):
         return self.__character
@@ -159,9 +164,8 @@ class Crossword():
     def print_crossword(self):
         for i in range(self.__length):
             for j in range(self.__length):
-                print(self.__all_letters[i][j].get_character(), end='')
-            print(' ', end='')
-            
+                print(self.__all_letters[i][j].get_character(), end="")
+            print(",")
     def get_pattern(self):
         return self.__pattern
 
