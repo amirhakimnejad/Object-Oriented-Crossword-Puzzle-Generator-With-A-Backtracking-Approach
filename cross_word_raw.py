@@ -162,6 +162,9 @@ class CrossWordWord():
 
         if len(word_string) != len(self.__letters):
             raise Exception("Invalid word length")
+        
+    def get_length(self):
+        return self.__length
 
     def print_info(self):
         print("Word: %s" % [letter.get_character()
@@ -238,6 +241,8 @@ class Crossword():
             two_dimensional_pattern=two_dimensional_pattern,
             size=size,
             direction="Vertical"))
+        
+        self.__all_word_placements.sort(key=lambda x: x.get_length(), reverse=True)
 
     def print_word_placements(self):
         for word in self.__all_word_placements:
