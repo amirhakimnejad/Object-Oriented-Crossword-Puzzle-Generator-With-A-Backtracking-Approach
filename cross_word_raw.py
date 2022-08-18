@@ -1,13 +1,9 @@
-pattern = "#    \n  ###\n   # \n # # \n##   "
+pattern = "#   #\n# ## \n# ## \n# ## \n#    "
 MinimumAcceptedLength = 3
 MaximumAcceptedLength = 10
-words = ['cat', 'dog', 'mouse', 'horse', 'cow', 'pig', 'sheep',
-         'chicken', 'duck', 'goose', 'fish', 'bird', 'snake',
-         'lizard', 'turtle', 'ant', 'bee', 'beetle', 'butterfly',
-         'caterpillar', 'cockroach', 'crocodile', 'dinosaur', 'elephant',
-         'fish', 'frog', 'giraffe', 'hedgehog', 'kangaroo', 'lion',
-         'monkey', 'octopus', 'owl', 'penguin', 'rabbit', 'rat',
-         'snail', 'snake', 'spider', 'tiger', 'whale', 'zebra']
+words_list = ['one', 'two', 'three', 'four',
+              'five', 'six', 'seven', 'eight', 'nine', 'ten']
+
 accepted_characters_in_pattern = ['#', ' ']
 
 
@@ -91,6 +87,12 @@ class CrossWordLetter():
     def get_character(self):
         return self.__character
 
+    def get_index(self):
+        return (self.x, self.y)
+
+    def print_info(self):
+        print('%s at %s, %s' % (self.__character, self.get_index()[0], self.get_index()[1]))
+
 
 class CrossWordWord():
     __starting_x = -1
@@ -147,12 +149,24 @@ class CrossWordWord():
         for letter, i in zip(word_string, range(len(word_string))):
             if self.__direction == "Horizontal":
                 self.__letters.append(CrossWordLetter(
-                    letter, self.__starting_x + i, self.__starting_y))
+                    letter, self.__starting_x, self.__starting_y+i))
             elif self.__direction == "Vertical":
                 self.__letters.append(CrossWordLetter(
-                    letter, self.__starting_x, self.__starting_y + i))
+                    letter, self.__starting_x + i, self.__starting_y))
             else:
                 raise Exception("Invalid direction")
+
+        for i in range(self.__length):
+            if self.__direction == "Horizontal":
+                if self.__letters[i].get_index()[0] != self.__starting_x:
+                    raise Exception("Invalid horizontal word")
+                if self.__letters[i].get_index()[1] != self.__starting_y + i:
+                    raise Exception("Invalid horizontal word")
+            elif self.__direction == "Vertical":
+                if self.__letters[i].get_index()[0] != self.__starting_x + i:
+                    raise Exception("Invalid vertical word")
+                if self.__letters[i].get_index()[1] != self.__starting_y:
+                    raise Exception("Invalid vertical word")
 
         if '#' in self.__letters:
             raise Exception("Invalid placement of word")
@@ -162,30 +176,89 @@ class CrossWordWord():
 
         if len(word_string) != len(self.__letters):
             raise Exception("Invalid word length")
-        
+
+    def empty_word(self):
+        self.fill_word(" " * self.__length)
+
+    def is_filled_letters_match_coming_word(self, other_word):
+        for letter in self.__letters:
+            other_letter = other_word.try_get_letter_with_index(
+                letter.get_index())
+            if other_letter is None:
+                continue
+            if other_letter.get_character() != letter.get_character():
+                return False
+        return True
+
     def get_length(self):
         return self.__length
 
+    def get_string(self):
+        return ''.join([letter.get_character() for letter in self.__letters])
+
+    def try_get_letter_with_index(self, index):
+        for letter in self.__letters:
+            if letter.get_index() == index:
+                return letter
+        return None
+
+    def get_x(self):
+        return self.__starting_x
+
+    def get_y(self):
+        return self.__starting_y
+
+    def get_direction(self):
+        return self.__direction
+
     def print_info(self):
+        print("------------------------------")
         print("Word: %s" % [letter.get_character()
               for letter in self.__letters])
+        for letter in self.__letters:
+            letter.print_info()
         print("Starting x: %s" % self.__starting_x)
         print("Starting y: %s" % self.__starting_y)
         print("Direction: %s" % self.__direction)
         print("Length: %s" % self.__length)
         print("Filled: %s" % self.is_filled())
+        print("------------------------------")
 
 
 class Crossword():
     __all_word_placements = []
     __pattern = None
     __answers = []
+    __solutions = []
     __length = -1
 
-    def __init__(self, pattern):
+    def __init__(self, pattern, all_possible_answers):
         self.__pattern = CrosswordPattern(pattern)
         self.__length = self.__pattern.size
         self.__fill_all_possible_word_places()
+        self.fill_answers(all_possible_answers,
+                          [word for word in all_possible_answers], self.__answers)
+
+    def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[]):
+        if len(self.__all_word_placements) == len(answers_stack):
+            return
+        biggest_word_to_find = self.__all_word_placements[-len(answers_stack)-1]
+        answer_to_add = CrossWordWord(biggest_word_to_find.get_x(), biggest_word_to_find.get_y(), biggest_word_to_find.get_direction(), biggest_word_to_find.get_length())
+        possible_answers = [word for word in available_possible_answers if len(
+            word) == answer_to_add.get_length()]
+        for answer in possible_answers:
+            answer_to_add.fill_word(answer)
+            if self.can_coming_string_be_in_word_placement(answer_to_add, answer):
+                available_possible_answers.remove(
+                    answer_to_add.get_string())
+                answers_stack.append(answer_to_add)
+                available_possible_answers.extend([word for word in all_possible_answers if len(
+                    word) < answer_to_add.get_length() and word not in available_possible_answers])
+                return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
+        if len(answers_stack) == 0:
+            return
+        answers_stack.pop()
+        return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
 
     def try_make_word_placement_from_string(self, word_string, starting_position, direction):
         try:
@@ -194,6 +267,12 @@ class Crossword():
             return word
         except Exception as e:
             return None
+
+    def can_coming_string_be_in_word_placement(self, word_placement_to_fill, word_string):
+        for answer in self.__answers:
+            if not answer.is_filled_letters_match_coming_word(word_placement_to_fill):
+                return False
+        return True
 
     def ــfind_word_placements_of_2d_letters(self, two_dimensional_pattern, size, direction):
         exported_word_placements = []
@@ -241,8 +320,9 @@ class Crossword():
             two_dimensional_pattern=two_dimensional_pattern,
             size=size,
             direction="Vertical"))
-        
-        self.__all_word_placements.sort(key=lambda x: x.get_length(), reverse=True)
+
+        self.__all_word_placements.sort(
+            key=lambda x: x.get_length(), reverse=False)
 
     def print_word_placements(self):
         for word in self.__all_word_placements:
@@ -251,12 +331,21 @@ class Crossword():
     def get_pattern(self):
         return self.__pattern
 
+    def print_answers(self):
+        for answer in self.__answers:
+            answer.print_info()
+
+
+def generate_puzzle(pattern, all_possible_answers):
+    crossword = Crossword(pattern, all_possible_answers)
+    return crossword
+
 
 def main():
-    crossword = Crossword(pattern)
-    crossword.get_pattern().draw()
-    print()
-    crossword.print_word_placements()
+    crossword_puzzle = generate_puzzle(pattern, words_list)
+    crossword_puzzle.get_pattern().draw()
+    crossword_puzzle.print_word_placements()
+    crossword_puzzle.print_answers()
 
 
 if __name__ == "__main__":
