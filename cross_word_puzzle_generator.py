@@ -44,6 +44,7 @@ class CrosswordPattern():
         pass
 
     def draw(self, direction='Horizontal'):
+        print('Pattern:')
         matrix_to_draw = [[]]
         if direction == 'Horizontal':
             matrix_to_draw = self.rows
@@ -330,6 +331,7 @@ class Crossword():
             key=lambda x: x.get_length(), reverse=False)
 
     def print_word_placements(self):
+        print("Required word placements:")
         for word in self.__all_word_placements:
             word.print_info()
 
@@ -337,6 +339,7 @@ class Crossword():
         return self.__pattern
 
     def print_answers(self):
+        print("Answers:")
         for answer in self.__answers:
             answer.print_info()
 
