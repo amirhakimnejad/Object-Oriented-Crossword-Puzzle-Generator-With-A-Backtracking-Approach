@@ -1,10 +1,9 @@
-pattern = "#   #\n# ## \n# ## \n# ## \n#    "
+import random
+
 MinimumAcceptedLength = 3
 MaximumAcceptedLength = 10
-words_list = ['one', 'two', 'three', 'four',
-              'five', 'six', 'seven', 'eight', 'nine', 'ten']
 
-accepted_characters_in_pattern = ['#', ' ']
+accepted_characters_in_pattern = ['#', "_"]
 
 
 class CrosswordPattern():
@@ -12,9 +11,8 @@ class CrosswordPattern():
     rows = []
     size = 0
 
-    def __init__(self, pattern_string):
-        self.rows = pattern_string.split('\n')
-        self.rows = [[char for char in row] for row in self.rows]
+    def __init__(self, pattern_list):
+        self.rows = [[char for char in row] for row in pattern_list]
         self.size = len(self.rows)
         if self.size < MinimumAcceptedLength:
             raise Exception(
@@ -26,7 +24,6 @@ class CrosswordPattern():
         for i in range(self.size):
             for j in range(self.size):
                 self.cols[j].append(self.rows[i][j])
-
         for row in self.rows:
             if len(self.rows) != self.size:
                 raise Exception(
@@ -34,7 +31,7 @@ class CrosswordPattern():
             for char in row:
                 if char not in accepted_characters_in_pattern:
                     raise Exception(
-                        'Invalid crossword pattern, only \'#\' and \' \' are allowed - %s' % char)
+                        'Invalid crossword pattern, only \'#\' and \'ـ\' are allowed - %s' % char)
 
         if len(self.cols) != self.size:
             raise Exception(
@@ -69,14 +66,14 @@ class CrossWordLetter():
 
     def __init__(self, character, x, y):
         if not CrossWordLetter.is_valid_character(character):
-            raise Exception('Invalid character %s' % character)
+            raise Exception('Invalid character "%s"' % character)
 
         self.__character = character
         self.x = x
         self.y = y
 
     def is_filled(self):
-        return self.__character != ' ' and self.__character != ''
+        return self.__character != "_" and self.__character != ''
 
     def is_found(self):
         return is_alpha(self.__character)
@@ -91,7 +88,8 @@ class CrossWordLetter():
         return (self.x, self.y)
 
     def print_info(self):
-        print('%s at %s, %s' % (self.__character, self.get_index()[0], self.get_index()[1]))
+        print('%s at %s, %s' %
+              (self.__character, self.get_index()[0], self.get_index()[1]))
 
 
 class CrossWordWord():
@@ -135,7 +133,7 @@ class CrossWordWord():
 
         self.__starting_y = starting_y
         if word_string is None:
-            word_string = " " * self.__length
+            word_string = "_" * self.__length
         self.fill_word(word_string)
 
     def is_filled(self):
@@ -149,7 +147,7 @@ class CrossWordWord():
         for letter, i in zip(word_string, range(len(word_string))):
             if self.__direction == "Horizontal":
                 self.__letters.append(CrossWordLetter(
-                    letter, self.__starting_x, self.__starting_y+i))
+                    letter, self.__starting_x, self.__starting_y + i))
             elif self.__direction == "Vertical":
                 self.__letters.append(CrossWordLetter(
                     letter, self.__starting_x + i, self.__starting_y))
@@ -178,7 +176,7 @@ class CrossWordWord():
             raise Exception("Invalid word length")
 
     def empty_word(self):
-        self.fill_word(" " * self.__length)
+        self.fill_word("_" * self.__length)
 
     def is_filled_letters_match_coming_word(self, other_word):
         for letter in self.__letters:
@@ -211,6 +209,11 @@ class CrossWordWord():
     def get_direction(self):
         return self.__direction
 
+    @staticmethod
+    def is_valid_string(string):
+        return len([char for char in string if not CrossWordLetter.is_valid_character(char)]) <= 0
+        
+
     def print_info(self):
         print("------------------------------")
         print("Word: %s" % [letter.get_character()
@@ -242,8 +245,10 @@ class Crossword():
     def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[]):
         if len(self.__all_word_placements) == len(answers_stack):
             return
-        biggest_word_to_find = self.__all_word_placements[-len(answers_stack)-1]
-        answer_to_add = CrossWordWord(biggest_word_to_find.get_x(), biggest_word_to_find.get_y(), biggest_word_to_find.get_direction(), biggest_word_to_find.get_length())
+        biggest_word_to_find = self.__all_word_placements[-len(
+            answers_stack)-1]
+        answer_to_add = CrossWordWord(biggest_word_to_find.get_x(), biggest_word_to_find.get_y(
+        ), biggest_word_to_find.get_direction(), biggest_word_to_find.get_length())
         possible_answers = [word for word in available_possible_answers if len(
             word) == answer_to_add.get_length()]
         for answer in possible_answers:
@@ -337,11 +342,27 @@ class Crossword():
 
 
 def generate_puzzle(pattern, all_possible_answers):
+    random.shuffle(all_possible_answers)
     crossword = Crossword(pattern, all_possible_answers)
     return crossword
 
 
+def load_pattern(file_name):
+    pattern = []
+    pattern_file = open("patterns/%s" % file_name, "r").readlines()
+    for line in pattern_file:
+        pattern.append([char for char in line.strip()])
+    return pattern
+
+
+def load_words():
+    words = [word.strip() for word in open("possible_words.txt", "r").readlines() if CrossWordWord.is_valid_string(word.strip())]
+    return list(set(words))
+
+
 def main():
+    pattern = load_pattern("pattern1.txt")
+    words_list = load_words()
     crossword_puzzle = generate_puzzle(pattern, words_list)
     crossword_puzzle.get_pattern().draw()
     crossword_puzzle.print_word_placements()
