@@ -33,9 +33,8 @@ Steps of the program
 
 ## Example input, output
 Code to run the program:
-```bash
+``` bash
 python3 cross_word_puzzle_generator.py
-```
 ```
 
 Program that runs
