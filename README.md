@@ -169,6 +169,7 @@ Filled: True
 - Adding more test cases
 - Maybe easily support non-square grids?
 - Looping for a certain time, find possible puzzles for a pattern and then rate them and pick the best ones 
+- Sort picked ones by the most intersections
 
 
 ## *Any issues, comments and pull requests are welcome.*

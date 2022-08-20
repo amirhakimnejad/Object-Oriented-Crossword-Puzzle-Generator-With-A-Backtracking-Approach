@@ -1,4 +1,5 @@
 import random
+import json
 
 MinimumAcceptedLength = 3
 MaximumAcceptedLength = 10
@@ -55,6 +56,8 @@ class CrosswordPattern():
         for row in matrix_to_draw:
             print(row)
 
+    def get_object(self):
+        return [''.join(row) for row in self.rows]
 
 class CrossWordLetter():
     __character = ''
@@ -227,6 +230,18 @@ class CrossWordWord():
         print("Filled: %s" % self.is_filled())
         print("------------------------------")
 
+    def get_object(self):
+        return {
+            'startPosition': {
+                "x": self.__starting_x,
+                "y": self.__starting_y,
+            },
+            "direction": {'x': 1 if self.__direction == "Horizontal" else 0,
+                          'y': 0 if self.__direction == "Horizontal" else 1},
+            "length": self.__length,
+            "word": self.get_string()
+        }
+
 
 class Crossword():
     __all_word_placements = []
@@ -343,6 +358,12 @@ class Crossword():
         for answer in self.__answers:
             answer.print_info()
 
+    def get_json(self):
+        level_data = {}
+        level_data['wordData'] = [word.get_object() for word in self.__answers]
+        level_data['pattern'] = self.__pattern.get_object()
+        return json.dumps(level_data)
+
 
 def generate_puzzle(pattern, all_possible_answers):
     random.shuffle(all_possible_answers)
@@ -371,6 +392,7 @@ def main():
     crossword_puzzle.get_pattern().draw()
     crossword_puzzle.print_word_placements()
     crossword_puzzle.print_answers()
+    print(crossword_puzzle.get_json())
 
 
 if __name__ == "__main__":
