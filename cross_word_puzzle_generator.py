@@ -212,7 +212,6 @@ class CrossWordWord():
     @staticmethod
     def is_valid_string(string):
         return len([char for char in string if not CrossWordLetter.is_valid_character(char)]) <= 0
-        
 
     def print_info(self):
         print("------------------------------")
@@ -265,7 +264,8 @@ class Crossword():
         answers_stack.pop()
         return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
 
-    def try_make_word_placement_from_string(self, word_string, starting_position, direction):
+    @staticmethod
+    def try_make_word_placement_from_string(word_string, starting_position, direction):
         try:
             word = CrossWordWord(
                 starting_x=starting_position[0], starting_y=starting_position[1], direction=direction, length=len(word_string))
@@ -290,9 +290,9 @@ class Crossword():
                 if char == "#":
                     if not working:
                         continue
-                    word_to_add = self.try_make_word_placement_from_string(word_string=current_word,
-                                                                           starting_position=starting_position,
-                                                                           direction=direction)
+                    word_to_add = Crossword.try_make_word_placement_from_string(word_string=current_word,
+                                                                                starting_position=starting_position,
+                                                                                direction=direction)
                     if word_to_add:
                         exported_word_placements.append(word_to_add)
                         word_to_add = None
@@ -304,9 +304,9 @@ class Crossword():
                             i, j) if direction == "Horizontal" else (j, i)
                         working = True
                     current_word = current_word + char
-            word_to_add = self.try_make_word_placement_from_string(word_string=current_word,
-                                                                   starting_position=starting_position,
-                                                                   direction=direction)
+            word_to_add = Crossword.try_make_word_placement_from_string(word_string=current_word,
+                                                                        starting_position=starting_position,
+                                                                        direction=direction)
             if word_to_add:
                 exported_word_placements.append(word_to_add)
         return exported_word_placements
@@ -356,7 +356,8 @@ def load_pattern(file_name):
 
 
 def load_words():
-    words = [word.strip() for word in open("possible_words.txt", "r").readlines() if CrossWordWord.is_valid_string(word.strip())]
+    words = [word.strip() for word in open("possible_words.txt",
+                                           "r").readlines() if CrossWordWord.is_valid_string(word.strip())]
     return list(set(words))
 
 
