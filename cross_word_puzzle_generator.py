@@ -233,8 +233,7 @@ class CrossWordWord():
                 "x": self.__starting_x,
                 "y": self.__starting_y,
             },
-            "direction": {'x': 1 if self.__direction == "Horizontal" else 0,
-                          'y': 0 if self.__direction == "Horizontal" else 1},
+            "direction": {'x': 1, 'y': 0} if self.__direction == "Horizontal" else {'x': 0, 'y': 1},
             "length": self.__length,
             "word": self.get_string()
         }
