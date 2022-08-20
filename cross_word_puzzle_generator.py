@@ -56,9 +56,6 @@ class CrosswordPattern():
         for row in matrix_to_draw:
             print(row)
 
-    def get_object(self):
-        return [''.join(row) for row in self.rows]
-
 class CrossWordLetter():
     __character = ''
     x = -1
@@ -361,7 +358,6 @@ class Crossword():
     def get_json(self):
         level_data = {}
         level_data['wordData'] = [word.get_object() for word in self.__answers]
-        level_data['pattern'] = self.__pattern.get_object()
         return json.dumps(level_data)
 
 
