@@ -227,11 +227,11 @@ class CrossWordWord():
         print("Filled: %s" % self.is_filled())
         print("------------------------------")
 
-    def get_object(self):
+    def get_object_cartesian(self):
         return {
             'startPosition': {
-                "x": self.__starting_x,
-                "y": self.__starting_y,
+                "x": self.__starting_y,
+                "y": self.__starting_x,
             },
             "direction": {'x': 1, 'y': 0} if self.__direction == "Horizontal" else {'x': 0, 'y': 1},
             "length": self.__length,
@@ -354,9 +354,9 @@ class Crossword():
         for answer in self.__answers:
             answer.print_info()
 
-    def get_json(self):
+    def get_json_cartesian(self):
         level_data = {}
-        level_data['wordData'] = [word.get_object() for word in self.__answers]
+        level_data['wordData'] = [word.get_object_cartesian() for word in self.__answers]
         return json.dumps(level_data)
 
 
@@ -387,7 +387,7 @@ def main():
     crossword_puzzle.get_pattern().draw()
     crossword_puzzle.print_word_placements()
     crossword_puzzle.print_answers()
-    print(crossword_puzzle.get_json())
+    print(crossword_puzzle.get_json_cartesian())
 
 
 if __name__ == "__main__":
