@@ -15,13 +15,15 @@ class CrosswordPattern():
     def __init__(self, pattern_list):
         self.rows = [[char for char in row] for row in pattern_list]
         self.size = len(self.rows)
+        
         if self.size < MinimumAcceptedLength:
             raise Exception(
-                'Crossword pattern must have at least %s rows.', MinimumAcceptedLength)
+                'Crossword pattern must have at least %s rows.' % MinimumAcceptedLength)
         if self.size > MaximumAcceptedLength:
             raise Exception(
-                'Crossword pattern must have at most %s rows.', MaximumAcceptedLength)
+                'Crossword pattern must have at most %s rows.' % MaximumAcceptedLength)
         self.cols = [[] for i in range(self.size)]
+        
         for i in range(self.size):
             for j in range(self.size):
                 self.cols[j].append(self.rows[i][j])
@@ -32,7 +34,7 @@ class CrosswordPattern():
             for char in row:
                 if char not in accepted_characters_in_pattern:
                     raise Exception(
-                        'Invalid crossword pattern, only \'#\' and \'ـ\' are allowed - %s' % char)
+                        'Invalid crossword pattern, only \'#\' and \'ـ\' are allowed not -%s-' % char)
 
         if len(self.cols) != self.size:
             raise Exception(
