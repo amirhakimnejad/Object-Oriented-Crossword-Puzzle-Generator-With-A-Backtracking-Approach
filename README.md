@@ -184,8 +184,8 @@ Filled: True
 
 
 ## Some things that maybe useful to add
-- Maybe limit looping to a certain number of iterations?
-- Maybe add a way to stop the algorithm if it's taking too long?
+- Maybe limit looping to a certain number of iterations? :white_check_mark:
+- Maybe add a way to stop the algorithm if it's taking too long? :white_check_mark:
 - Adding more test cases
 - Maybe easily support non-square grids?
 - Looping for a certain time, find possible puzzles for a pattern and then rate them and pick the best ones 
