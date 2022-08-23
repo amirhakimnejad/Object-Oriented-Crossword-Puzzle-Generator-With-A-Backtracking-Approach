@@ -1,9 +1,8 @@
 import random
 import json
+import datetime
 
-MinimumAcceptedLength = 3
-MaximumAcceptedLength = 10
-
+RECURSION_MAX_ATTEMPTS = 100
 accepted_characters_in_pattern = ['#', "_"]
 
 
@@ -12,18 +11,19 @@ class CrosswordPattern():
     rows = []
     size = 0
 
-    def __init__(self, pattern_list):
+    def __init__(self, pattern_list, min_word_length=3, max_word_length=10):
+        cols = []
         self.rows = [[char for char in row] for row in pattern_list]
         self.size = len(self.rows)
-        
-        if self.size < MinimumAcceptedLength:
+
+        if self.size < min_word_length:
             raise Exception(
-                'Crossword pattern must have at least %s rows.' % MinimumAcceptedLength)
-        if self.size > MaximumAcceptedLength:
+                'Crossword pattern must have at least %s rows.' % min_word_length)
+        if self.size > max_word_length:
             raise Exception(
-                'Crossword pattern must have at most %s rows.' % MaximumAcceptedLength)
+                'Crossword pattern must have at most %s rows.' % max_word_length)
         self.cols = [[] for i in range(self.size)]
-        
+
         for i in range(self.size):
             for j in range(self.size):
                 self.cols[j].append(self.rows[i][j])
@@ -34,7 +34,7 @@ class CrosswordPattern():
             for char in row:
                 if char not in accepted_characters_in_pattern:
                     raise Exception(
-                        'Invalid crossword pattern, only \'#\' and \'ـ\' are allowed not -%s-' % char)
+                        'Invalid crossword pattern, only %s are allowed not -%s-' % (','.join(accepted_characters_in_pattern), char))
 
         if len(self.cols) != self.size:
             raise Exception(
@@ -57,6 +57,7 @@ class CrosswordPattern():
             raise Exception('Invalid direction')
         for row in matrix_to_draw:
             print(row)
+
 
 class CrossWordLetter():
     __character = ''
@@ -102,10 +103,12 @@ class CrossWordWord():
     __letters = []
     __length = -1
 
-    def __init__(self, starting_x, starting_y, direction, length, word_string=None):
-        if length < MinimumAcceptedLength or length > MaximumAcceptedLength:
+    def __init__(self, starting_x, starting_y, direction, word_string, min_word_length=3, max_word_length=10):
+        self.__letters = []
+        
+        self.__length = len(word_string)
+        if self.__length < min_word_length or self.__length > max_word_length:
             raise Exception("Invalid word length")
-        self.__length = length
 
         if not isinstance(direction, str):
             raise TypeError("direction must be set to a string")
@@ -113,11 +116,12 @@ class CrossWordWord():
             raise ValueError(
                 "direction must be either 'Horizontal' or 'Vertical'")
 
-        if direction == "Horizontal" and (abs(starting_x - length) > self.__length):
-            raise Exception("Invalid horizontal word %s %s %s %s" % (
-                starting_x, length, self.__length, word_string))
-        if direction == "Vertical" and (abs(starting_y - length) > self.__length):
-            raise Exception("Invalid vertical word")
+        if direction == "Horizontal" and (abs(starting_x - self.__length) > self.__length):
+            raise Exception("Invalid horizontal word %s %s %s" % (
+                starting_x, self.__length, word_string))
+        if direction == "Vertical" and (abs(starting_y - self.__length) > self.__length):
+            raise Exception("Invalid vertical word %s %s %s" %
+                            (starting_x, self.__length, word_string))
 
         self.__direction = direction
 
@@ -248,22 +252,30 @@ class Crossword():
     __solutions = []
     __length = -1
 
-    def __init__(self, pattern, all_possible_answers):
+    def __init__(self, pattern, all_possible_answers, min_word_length=3, max_word_length=10):
+        self.__all_word_placements = []
+        self.__answers = []
+        self.__solutions = []
         self.__pattern = CrosswordPattern(pattern)
         self.__length = self.__pattern.size
         self.__fill_all_possible_word_places()
-        self.fill_answers(all_possible_answers,
-                          [word for word in all_possible_answers], self.__answers)
+        self.fill_answers(all_possible_answers, [
+                          word for word in all_possible_answers], self.__answers)
 
-    def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[]):
+    def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[], attempts_tried=0):
+        attempts_tried += 1
+        if attempts_tried > RECURSION_MAX_ATTEMPTS:
+            raise Exception("Too many attempts")
+
         if len(self.__all_word_placements) == len(answers_stack):
             return
         biggest_word_to_find = self.__all_word_placements[-len(
             answers_stack)-1]
         answer_to_add = CrossWordWord(biggest_word_to_find.get_x(), biggest_word_to_find.get_y(
-        ), biggest_word_to_find.get_direction(), biggest_word_to_find.get_length())
+        ), biggest_word_to_find.get_direction(), biggest_word_to_find.get_string())
         possible_answers = [word for word in available_possible_answers if len(
             word) == answer_to_add.get_length()]
+        random.shuffle(possible_answers)
         for answer in possible_answers:
             answer_to_add.fill_word(answer)
             if self.can_coming_string_be_in_word_placement(answer_to_add, answer):
@@ -272,17 +284,17 @@ class Crossword():
                 answers_stack.append(answer_to_add)
                 available_possible_answers.extend([word for word in all_possible_answers if len(
                     word) < answer_to_add.get_length() and word not in available_possible_answers])
-                return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
+                return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack, attempts_tried)
         if len(answers_stack) == 0:
             return
         answers_stack.pop()
-        return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
+        return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack, attempts_tried)
 
     @staticmethod
     def try_make_word_placement_from_string(word_string, starting_position, direction):
         try:
             word = CrossWordWord(
-                starting_x=starting_position[0], starting_y=starting_position[1], direction=direction, length=len(word_string))
+                starting_x=starting_position[0], starting_y=starting_position[1], direction=direction, word_string=word_string)
             return word
         except Exception as e:
             return None
@@ -358,13 +370,13 @@ class Crossword():
 
     def get_json_cartesian(self):
         level_data = {}
-        level_data['wordData'] = [word.get_object_cartesian() for word in self.__answers]
+        level_data['wordData'] = [word.get_object_cartesian()
+                                  for word in self.__answers]
         return json.dumps(level_data)
 
 
-def generate_puzzle(pattern, all_possible_answers):
-    random.shuffle(all_possible_answers)
-    crossword = Crossword(pattern, all_possible_answers)
+def generate_crossword(pattern, all_possible_answers, min_word_length, max_word_length):
+    crossword = Crossword(pattern, all_possible_answers, min_word_length, max_word_length)
     return crossword
 
 
@@ -376,20 +388,98 @@ def load_pattern(file_name):
     return pattern
 
 
+def load_random_pattern():
+    pattern_name = "pattern%d.txt" % random.randint(1, 4)
+    return load_pattern(pattern_name)
+
+
 def load_words():
     words = [word.strip() for word in open("possible_words.txt",
                                            "r").readlines() if CrossWordWord.is_valid_string(word.strip())]
-    return list(set(words))
+
+    unique_words = []
+    for word in words:
+        if word not in unique_words:
+            unique_words.append(word)
+    return unique_words
+
+
+def create_levels_over_time(seconds_to_run, min_word_length, max_word_length):
+    endTime = datetime.datetime.now() + datetime.timedelta(seconds=seconds_to_run)
+    levels = []
+    counter = 0
+    while datetime.datetime.now() < endTime:
+        try:
+            levels.append(create_a_level(min_word_length, max_word_length))
+            counter += 1
+        except:
+            pass
+    if len(levels) <= 0:
+        raise Exception("No levels created")
+    print("Created %d levels" % counter)
+    return levels
+
+
+def create_levels(how_many_levels, min_word_length, max_word_length):
+    levels = []
+    tries = 0
+    while len(levels) < how_many_levels or tries >= (how_many_levels * 2):
+        try:
+            levels.append(create_a_level(min_word_length, max_word_length))
+        except:
+            pass
+        tries += 1
+    if len(levels) <= 0:
+        raise Exception("No levels created")
+    print("Created %d levels" % len(levels))
+    return levels
+
+
+def create_a_level(min_word_length, max_word_length, pattern_to_use=None, words=None):
+    max_tries = 10
+    if words is None:
+        all_possible_answers = load_words()
+    else:
+        all_possible_answers = words
+    for i in range(max_tries):
+        if pattern_to_use is None:
+            pattern = load_random_pattern()
+        else:
+            pattern = pattern_to_use
+        try:
+            crossword = generate_crossword(pattern, all_possible_answers, min_word_length, max_word_length)
+            return crossword
+        except:
+            continue
+    raise Exception("Could not create a level after %d tries each with the depth of %s" % (
+        max_tries, RECURSION_MAX_ATTEMPTS))
+
+
+def create_levels_json(how_many_levels, min_word_length, max_word_length):
+    levels = create_levels(how_many_levels, min_word_length, max_word_length)
+    return create_json_from_levels_list(levels, min_word_length, max_word_length)
+
+
+def create_levels_over_time_json(seconds_to_run, min_word_length, max_word_length):
+    levels = create_levels_over_time(seconds_to_run, min_word_length, max_word_length)
+    return create_json_from_levels_list(levels, min_word_length, max_word_length)
+
+
+def create_json_from_levels_list(levels, min_word_length, max_word_length):
+    levels_dict = {}
+    for level, i in zip(levels, range(len(levels))):
+        levels_dict[i] = json.loads(level.get_json_cartesian())
+    return json.dumps(levels_dict)
 
 
 def main():
-    pattern = load_pattern("pattern1.txt")
-    words_list = load_words()
-    crossword_puzzle = generate_puzzle(pattern, words_list)
+    crossword_puzzle = create_a_level(min_word_length=3, max_word_length=6)
     crossword_puzzle.get_pattern().draw()
     crossword_puzzle.print_word_placements()
     crossword_puzzle.print_answers()
     print(crossword_puzzle.get_json_cartesian())
+    # print(create_levels_over_time_json(seconds_to_run=5, min_word_length=3, max_word_length=10))
+    # print(create_levels_json(how_many_levels=10, min_word_length=3, max_word_length=10))
 
 
 if __name__ == "__main__":

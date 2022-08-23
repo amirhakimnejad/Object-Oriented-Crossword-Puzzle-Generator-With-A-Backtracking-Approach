@@ -40,13 +40,10 @@ python3 cross_word_puzzle_generator.py
 Program that runs
 ``` python
 def main():
-    pattern = load_pattern("pattern1.txt")
-    words_list = load_words()
-    crossword_puzzle = generate_puzzle(pattern, words_list)
+    crossword_puzzle = create_a_level(min_word_length=3, max_word_length=6)
     crossword_puzzle.get_pattern().draw()
     crossword_puzzle.print_word_placements()
     crossword_puzzle.print_answers()
-
 
 if __name__ == "__main__":
     main()
@@ -56,18 +53,30 @@ Output
 
 ``` text
 Pattern:
-['#', '_', '_', '_', '#']
-['#', '_', '#', '#', '_']
-['#', '_', '#', '#', '_']
-['#', '_', '#', '#', '_']
-['#', '_', '_', '_', '_']
+['#', '#', '#', '#', '#', '#', '_']
+['_', '_', '_', '_', '#', '#', '_']
+['_', '#', '#', '_', '_', '_', '_']
+['_', '#', '#', '_', '#', '#', '_']
+['_', '#', '#', '_', '#', '#', '_']
+['#', '_', '_', '_', '#', '#', '_']
 Required word placements:
 ------------------------------
 Word: ['_', '_', '_']
-_ at 0, 1
-_ at 0, 2
-_ at 0, 3
-Starting x: 0
+_ at 2, 3
+_ at 2, 4
+_ at 2, 5
+Starting x: 2
+Starting y: 3
+Direction: Horizontal
+Length: 3
+Filled: False
+------------------------------
+------------------------------
+Word: ['_', '_', '_']
+_ at 5, 1
+_ at 5, 2
+_ at 5, 3
+Starting x: 5
 Starting y: 1
 Direction: Horizontal
 Length: 3
@@ -75,86 +84,97 @@ Filled: False
 ------------------------------
 ------------------------------
 Word: ['_', '_', '_', '_']
-_ at 4, 1
-_ at 4, 2
-_ at 4, 3
-_ at 4, 4
-Starting x: 4
-Starting y: 1
+_ at 1, 0
+_ at 1, 1
+_ at 1, 2
+_ at 1, 3
+Starting x: 1
+Starting y: 0
 Direction: Horizontal
 Length: 4
 Filled: False
 ------------------------------
 ------------------------------
 Word: ['_', '_', '_', '_']
-_ at 1, 4
-_ at 2, 4
-_ at 3, 4
-_ at 4, 4
+_ at 1, 0
+_ at 2, 0
+_ at 3, 0
+_ at 4, 0
 Starting x: 1
-Starting y: 4
+Starting y: 0
 Direction: Vertical
 Length: 4
 Filled: False
 ------------------------------
 ------------------------------
 Word: ['_', '_', '_', '_', '_']
-_ at 0, 1
-_ at 1, 1
-_ at 2, 1
-_ at 3, 1
-_ at 4, 1
-Starting x: 0
-Starting y: 1
+_ at 1, 3
+_ at 2, 3
+_ at 3, 3
+_ at 4, 3
+_ at 5, 3
+Starting x: 1
+Starting y: 3
 Direction: Vertical
 Length: 5
 Filled: False
 ------------------------------
 Answers:
 ------------------------------
-Word: ['s', 'm', 'i', 'l', 'e']
-s at 0, 1
-m at 1, 1
-i at 2, 1
-l at 3, 1
-e at 4, 1
-Starting x: 0
-Starting y: 1
+Word: ['b', 'a', 's', 'i', 's']
+b at 1, 3
+a at 2, 3
+s at 3, 3
+i at 4, 3
+s at 5, 3
+Starting x: 1
+Starting y: 3
 Direction: Vertical
 Length: 5
 Filled: True
 ------------------------------
 ------------------------------
-Word: ['y', 'o', 'u', 'r']
-y at 1, 4
-o at 2, 4
-u at 3, 4
-r at 4, 4
+Word: ['b', 'a', 'b', 'y']
+b at 1, 0
+a at 2, 0
+b at 3, 0
+y at 4, 0
 Starting x: 1
-Starting y: 4
+Starting y: 0
 Direction: Vertical
 Length: 4
 Filled: True
 ------------------------------
 ------------------------------
-Word: ['e', 'v', 'e', 'r']
-e at 4, 1
-v at 4, 2
-e at 4, 3
-r at 4, 4
-Starting x: 4
-Starting y: 1
+Word: ['b', 'o', 'm', 'b']
+b at 1, 0
+o at 1, 1
+m at 1, 2
+b at 1, 3
+Starting x: 1
+Starting y: 0
 Direction: Horizontal
 Length: 4
 Filled: True
 ------------------------------
 ------------------------------
-Word: ['s', 'h', 'e']
-s at 0, 1
-h at 0, 2
-e at 0, 3
-Starting x: 0
+Word: ['g', 'a', 's']
+g at 5, 1
+a at 5, 2
+s at 5, 3
+Starting x: 5
 Starting y: 1
+Direction: Horizontal
+Length: 3
+Filled: True
+------------------------------
+------------------------------
+Word: ['a', 'r', 'm']
+a at 2, 3
+r at 2, 4
+m at 2, 5
+Starting x: 2
+Starting y: 3
 Direction: Horizontal
 Length: 3
 Filled: True
