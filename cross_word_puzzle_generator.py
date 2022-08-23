@@ -389,7 +389,7 @@ def load_pattern(file_name):
 
 
 def load_random_pattern():
-    pattern_name = "pattern%d.txt" % random.randint(1, 4)
+    pattern_name = "pattern%d.txt" % random.randint(1, 11)
     return load_pattern(pattern_name)
 
 
