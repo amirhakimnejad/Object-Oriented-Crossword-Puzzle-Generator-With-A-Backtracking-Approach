@@ -1,6 +1,7 @@
 import random
 import json
 import datetime
+from collections import Counter
 
 RECURSION_MAX_ATTEMPTS = 100
 accepted_characters_in_pattern = ['#', "_"]
