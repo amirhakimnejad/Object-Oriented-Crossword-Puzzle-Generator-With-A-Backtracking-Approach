@@ -417,7 +417,7 @@ def load_random_pattern():
 def load_words():
     words = [word.strip() for word in open("possible_words.txt",
                                            "r").readlines() if CrossWordWord.is_valid_string(word.strip())]
-
+    words = [word.upper() for word in words]
     unique_words = []
     for word in words:
         if word not in unique_words:
