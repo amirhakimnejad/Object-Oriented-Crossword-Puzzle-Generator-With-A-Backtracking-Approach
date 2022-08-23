@@ -455,17 +455,7 @@ def create_a_level(min_word_length, max_word_length, pattern_to_use=None, words=
         max_tries, RECURSION_MAX_ATTEMPTS))
 
 
-def create_levels_json(how_many_levels, min_word_length, max_word_length):
-    levels = create_levels(how_many_levels, min_word_length, max_word_length)
-    return create_json_from_levels_list(levels, min_word_length, max_word_length)
-
-
-def create_levels_over_time_json(seconds_to_run, min_word_length, max_word_length):
-    levels = create_levels_over_time(seconds_to_run, min_word_length, max_word_length)
-    return create_json_from_levels_list(levels, min_word_length, max_word_length)
-
-
-def create_json_from_levels_list(levels, min_word_length, max_word_length):
+def create_json_from_levels_list(levels):
     levels_dict = {}
     for level, i in zip(levels, range(len(levels))):
         levels_dict[i] = json.loads(level.get_json_cartesian())
@@ -473,13 +463,22 @@ def create_json_from_levels_list(levels, min_word_length, max_word_length):
 
 
 def main():
+    ## Create one level
     crossword_puzzle = create_a_level(min_word_length=3, max_word_length=6)
     crossword_puzzle.get_pattern().draw()
     crossword_puzzle.print_word_placements()
     crossword_puzzle.print_answers()
     print(crossword_puzzle.get_json_cartesian())
-    # print(create_levels_over_time_json(seconds_to_run=5, min_word_length=3, max_word_length=10))
-    # print(create_levels_json(how_many_levels=10, min_word_length=3, max_word_length=10))
+    
+    ## Create max possible number of levels over time
+    # levels = create_levels_over_time(seconds_to_run=5, min_word_length=3, max_word_length=10)
+    # levels = create_json_from_levels_list(levels)
+    # print(levels)
+    
+    ## Create a fixed number of levels
+    # levels = create_levels(how_many_levels=10, min_word_length=3, max_word_length=10)
+    # levels = create_json_from_levels_list(levels)
+    # print(levels)
 
 
 if __name__ == "__main__":
