@@ -372,7 +372,8 @@ class Crossword():
             word_with_letter_repeat = Counter(word_string)
 
             for letter in set(word_string):
-                times_to_add = word_with_letter_repeat[letter] - all_letters_repeat[letter]
+                times_to_add = word_with_letter_repeat[letter] - \
+                    all_letters_repeat[letter]
                 if times_to_add <= 0:
                     continue
                 for i in range(times_to_add):
@@ -404,7 +405,8 @@ class Crossword():
 
 
 def generate_crossword(pattern, all_possible_answers, min_word_length, max_word_length):
-    crossword = Crossword(pattern, all_possible_answers, min_word_length, max_word_length)
+    crossword = Crossword(pattern, all_possible_answers,
+                          min_word_length, max_word_length)
     return crossword
 
 
@@ -475,7 +477,8 @@ def create_a_level(min_word_length, max_word_length, pattern_to_use=None, words=
         else:
             pattern = pattern_to_use
         try:
-            crossword = generate_crossword(pattern, all_possible_answers, min_word_length, max_word_length)
+            crossword = generate_crossword(
+                pattern, all_possible_answers, min_word_length, max_word_length)
             return crossword
         except:
             continue
@@ -488,6 +491,16 @@ def create_json_from_levels_list(levels):
     for level, i in zip(levels, range(len(levels))):
         levels_dict[i] = json.loads(level.get_json_cartesian())
     return json.dumps(levels_dict)
+
+
+def save_dictionary_as_json_file(dictionary, file_name):
+    file = open('levels/%s.json' % file_name, 'w')
+    file.write(json.dumps(dictionary))
+
+
+def save_dictionaries_as_json_files(dictionaries):
+    for dictionary, i in zip(dictionaries, range(1, len(dictionaries))):
+        save_dictionary_as_json_file(dictionary, 'level%s' % i)
 
 
 def main():
