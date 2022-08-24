@@ -3,7 +3,16 @@ import json
 import datetime
 from collections import Counter
 
+SORT_WITH_SIMILARITY = True
 accepted_characters_in_pattern = ['#', "_"]
+
+
+def find_number_of_character_repeat_of_a_string_in_another(word1, word2):
+    count = 0
+    for char in word1:
+        if char in word2:
+            count += 1
+    return count
 
 
 class CrosswordPattern():
@@ -280,6 +289,9 @@ class Crossword():
         possible_answers = [word for word in available_possible_answers if len(
             word) == answer_to_add.get_length()]
         random.shuffle(possible_answers)
+        if len(answers_stack) > 0 and SORT_WITH_SIMILARITY:
+            possible_answers.sort(key=lambda word: find_number_of_character_repeat_of_a_string_in_another(
+                answers_stack[-1].indexed_string(), word), reverse=True)
         for answer in possible_answers:
             answer_to_add.fill_word(answer)
             if self.can_coming_string_be_in_word_placement(answer_to_add, answer):

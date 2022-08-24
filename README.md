@@ -188,8 +188,8 @@ Filled: True
 - Maybe add a way to stop the algorithm if it's taking too long? :white_check_mark:
 - Adding more test cases
 - Maybe easily support non-square grids?
-- Looping for a certain time, find possible puzzles for a pattern and then rate them and pick the best ones 
-- Sort picked ones by the most intersections
+- Looping for a certain time, find possible puzzles for a pattern and then rate them and pick the best ones :white_check_mark:
+- Sort picked ones by the most intersections :white_check_mark:
 
 
 ## *Any issues, comments and pull requests are welcome.*
