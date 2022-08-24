@@ -103,8 +103,10 @@ class CrossWordWord():
     __direction = ""
     __letters = []
     __length = -1
+    __indexed_string = ''
 
     def __init__(self, starting_x, starting_y, direction, word_string, min_word_length=3, max_word_length=10):
+        self.__indexed_string = ''
         self.__letters = []
 
         self.__length = len(word_string)
@@ -143,6 +145,7 @@ class CrossWordWord():
         if word_string is None:
             word_string = "_" * self.__length
         self.fill_word(word_string)
+        self.__indexed_string = self.__get_string()
 
     def is_filled(self):
         for letter in self.__letters:
@@ -183,6 +186,8 @@ class CrossWordWord():
         if len(word_string) != len(self.__letters):
             raise Exception("Invalid word length")
 
+        self.__indexed_string = self.__get_string()
+
     def empty_word(self):
         self.fill_word("_" * self.__length)
 
@@ -199,7 +204,7 @@ class CrossWordWord():
     def get_length(self):
         return self.__length
 
-    def get_string(self):
+    def __get_string(self):
         return ''.join([letter.get_character() for letter in self.__letters])
 
     def try_get_letter_with_index(self, index):
@@ -216,6 +221,9 @@ class CrossWordWord():
 
     def get_direction(self):
         return self.__direction
+
+    def indexed_string(self):
+        return self.__indexed_string
 
     @staticmethod
     def is_valid_string(string):
@@ -242,7 +250,7 @@ class CrossWordWord():
             },
             "direction": {'x': 1, 'y': 0} if self.__direction == "Horizontal" else {'x': 0, 'y': 1},
             "length": self.__length,
-            "word": self.get_string()
+            "word": self.indexed_string()
         }
 
 
@@ -273,7 +281,7 @@ class Crossword():
         biggest_word_to_find = self.__all_word_placements[-len(
             answers_stack)-1]
         answer_to_add = CrossWordWord(biggest_word_to_find.get_x(), biggest_word_to_find.get_y(
-        ), biggest_word_to_find.get_direction(), biggest_word_to_find.get_string())
+        ), biggest_word_to_find.get_direction(), biggest_word_to_find.indexed_string())
         possible_answers = [word for word in available_possible_answers if len(
             word) == answer_to_add.get_length()]
         random.shuffle(possible_answers)
@@ -281,7 +289,7 @@ class Crossword():
             answer_to_add.fill_word(answer)
             if self.can_coming_string_be_in_word_placement(answer_to_add, answer):
                 available_possible_answers.remove(
-                    answer_to_add.get_string())
+                    answer_to_add.indexed_string())
                 answers_stack.append(answer_to_add)
                 available_possible_answers.extend([word for word in all_possible_answers if len(
                     word) < answer_to_add.get_length() and word not in available_possible_answers])
@@ -360,7 +368,7 @@ class Crossword():
         required_letters = []
         for word in self.get_answers():
             all_letters_repeat = Counter(''.join(required_letters))
-            word_string = word.get_string()
+            word_string = word.indexed_string()
             word_with_letter_repeat = Counter(word_string)
 
             for letter in set(word_string):
