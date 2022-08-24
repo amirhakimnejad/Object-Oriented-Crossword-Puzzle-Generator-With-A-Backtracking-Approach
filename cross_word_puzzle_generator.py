@@ -3,7 +3,6 @@ import json
 import datetime
 from collections import Counter
 
-RECURSION_MAX_ATTEMPTS = 100
 accepted_characters_in_pattern = ['#', "_"]
 
 
@@ -271,11 +270,7 @@ class Crossword():
         self.fill_answers(all_possible_answers, [
                           word for word in all_possible_answers], self.__answers)
 
-    def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[], attempts_tried=0):
-        attempts_tried += 1
-        if attempts_tried > RECURSION_MAX_ATTEMPTS:
-            raise Exception("Too many attempts")
-
+    def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[]):
         if len(self.__all_word_placements) == len(answers_stack):
             return
         biggest_word_to_find = self.__all_word_placements[-len(
@@ -293,11 +288,11 @@ class Crossword():
                 answers_stack.append(answer_to_add)
                 available_possible_answers.extend([word for word in all_possible_answers if len(
                     word) < answer_to_add.get_length() and word not in available_possible_answers])
-                return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack, attempts_tried)
+                return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
         if len(answers_stack) == 0:
             return
         answers_stack.pop()
-        return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack, attempts_tried)
+        return self.fill_answers(all_possible_answers, available_possible_answers, answers_stack)
 
     @staticmethod
     def try_make_word_placement_from_string(word_string, starting_position, direction):
@@ -482,8 +477,7 @@ def create_a_level(min_word_length, max_word_length, pattern_to_use=None, words=
             return crossword
         except:
             continue
-    raise Exception("Could not create a level after %d tries each with the depth of %s" % (
-        max_tries, RECURSION_MAX_ATTEMPTS))
+    raise Exception("Could not create a level after %d tries" % (max_tries))
 
 
 def create_json_from_levels_list(levels):
