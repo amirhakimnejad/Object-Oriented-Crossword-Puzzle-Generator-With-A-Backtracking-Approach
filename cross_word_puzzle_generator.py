@@ -106,7 +106,7 @@ class CrossWordWord():
 
     def __init__(self, starting_x, starting_y, direction, word_string, min_word_length=3, max_word_length=10):
         self.__letters = []
-        
+
         self.__length = len(word_string)
         if self.__length < min_word_length or self.__length > max_word_length:
             raise Exception("Invalid word length")
@@ -355,14 +355,14 @@ class Crossword():
 
         self.__all_word_placements.sort(
             key=lambda x: x.get_length(), reverse=False)
-    
+
     def get_list_of_required_letters_to_solve(self):
         required_letters = []
         for word in self.get_answers():
             all_letters_repeat = Counter(''.join(required_letters))
             word_string = word.get_string()
             word_with_letter_repeat = Counter(word_string)
-            
+
             for letter in set(word_string):
                 times_to_add = word_with_letter_repeat[letter] - all_letters_repeat[letter]
                 if times_to_add <= 0:
@@ -370,13 +370,12 @@ class Crossword():
                 for i in range(times_to_add):
                     required_letters.append(letter)
         return required_letters
-        
 
     def print_word_placements(self):
         print("Required word placements:")
         for word in self.__all_word_placements:
             word.print_info()
-    
+
     def get_answers(self):
         return self.__answers
 
@@ -410,7 +409,7 @@ def load_pattern(file_name):
 
 
 def load_random_pattern():
-    pattern_name = "pattern%d.txt" % random.randint(1, 11)
+    pattern_name = "pattern%d.txt" % random.randint(1, 10)
     return load_pattern(pattern_name)
 
 
