@@ -447,13 +447,15 @@ def create_levels_over_time(seconds_to_run, min_word_length, max_word_length):
 
 def create_levels(how_many_levels, min_word_length, max_word_length):
     levels = []
-    tries = 0
-    while len(levels) < how_many_levels or tries >= (how_many_levels * 2):
+    while len(levels) < how_many_levels:
         try:
-            levels.append(create_a_level(min_word_length, max_word_length))
+            created_level = create_a_level(min_word_length, max_word_length)
+            if len(created_level.get_list_of_required_letters_to_solve()) >= 7:
+                continue
+            levels.append(created_level)
+            print("Created level %d" % len(levels))
         except:
-            pass
-        tries += 1
+            continue
     if len(levels) <= 0:
         raise Exception("No levels created")
     print("Created %d levels" % len(levels))
