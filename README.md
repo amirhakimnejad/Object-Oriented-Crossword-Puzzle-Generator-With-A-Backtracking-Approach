@@ -53,127 +53,173 @@ Output
 
 ``` text
 Pattern:
-['#', '#', '#', '#', '#', '#', '_']
-['_', '_', '_', '_', '#', '#', '_']
-['_', '#', '#', '_', '_', '_', '_']
-['_', '#', '#', '_', '#', '#', '_']
-['_', '#', '#', '_', '#', '#', '_']
-['#', '_', '_', '_', '#', '#', '_']
-Required word placements:
+['_', '_', '_', '_', '_', '#']
+['_', '#', '#', '_', '#', '#']
+['_', '#', '#', '_', '#', '_']
+['#', '_', '#', '_', '_', '_']
+['#', '_', '#', '#', '#', '_']
+['#', '_', '_', '_', '_', '_']
+------------------------------
+Word: ['_', '_', '_', '_', '_']
+_ at 0, 0
+_ at 0, 1
+_ at 0, 2
+_ at 0, 3
+_ at 0, 4
+Starting x: 0
+Starting y: 0
+Direction: Horizontal
+Length: 5
+Filled: False
+------------------------------
 ------------------------------
 Word: ['_', '_', '_']
-_ at 2, 3
-_ at 2, 4
-_ at 2, 5
-Starting x: 2
+_ at 3, 3
+_ at 3, 4
+_ at 3, 5
+Starting x: 3
 Starting y: 3
 Direction: Horizontal
 Length: 3
-Filled: False
-------------------------------
-------------------------------
-Word: ['_', '_', '_']
-_ at 5, 1
-_ at 5, 2
-_ at 5, 3
-Starting x: 5
-Starting y: 1
-Direction: Horizontal
-Length: 3
-Filled: False
-------------------------------
-------------------------------
-Word: ['_', '_', '_', '_']
-_ at 1, 0
-_ at 1, 1
-_ at 1, 2
-_ at 1, 3
-Starting x: 1
-Starting y: 0
-Direction: Horizontal
-Length: 4
-Filled: False
-------------------------------
-------------------------------
-Word: ['_', '_', '_', '_']
-_ at 1, 0
-_ at 2, 0
-_ at 3, 0
-_ at 4, 0
-Starting x: 1
-Starting y: 0
-Direction: Vertical
-Length: 4
 Filled: False
 ------------------------------
 ------------------------------
 Word: ['_', '_', '_', '_', '_']
-_ at 1, 3
-_ at 2, 3
-_ at 3, 3
-_ at 4, 3
+_ at 5, 1
+_ at 5, 2
 _ at 5, 3
-Starting x: 1
-Starting y: 3
-Direction: Vertical
-Length: 5
-Filled: False
-------------------------------
-Answers:
-------------------------------
-Word: ['b', 'a', 's', 'i', 's']
-b at 1, 3
-a at 2, 3
-s at 3, 3
-i at 4, 3
-s at 5, 3
-Starting x: 1
-Starting y: 3
-Direction: Vertical
-Length: 5
-Filled: True
-------------------------------
-------------------------------
-Word: ['b', 'a', 'b', 'y']
-b at 1, 0
-a at 2, 0
-b at 3, 0
-y at 4, 0
-Starting x: 1
-Starting y: 0
-Direction: Vertical
-Length: 4
-Filled: True
-------------------------------
-------------------------------
-Word: ['b', 'o', 'm', 'b']
-b at 1, 0
-o at 1, 1
-m at 1, 2
-b at 1, 3
-Starting x: 1
-Starting y: 0
-Direction: Horizontal
-Length: 4
-Filled: True
-------------------------------
-------------------------------
-Word: ['g', 'a', 's']
-g at 5, 1
-a at 5, 2
-s at 5, 3
+_ at 5, 4
+_ at 5, 5
 Starting x: 5
 Starting y: 1
 Direction: Horizontal
+Length: 5
+Filled: False
+------------------------------
+------------------------------
+Word: ['_', '_', '_']
+_ at 0, 0
+_ at 1, 0
+_ at 2, 0
+Starting x: 0
+Starting y: 0
+Direction: Vertical
+Length: 3
+Filled: False
+------------------------------
+------------------------------
+Word: ['_', '_', '_']
+_ at 3, 1
+_ at 4, 1
+_ at 5, 1
+Starting x: 3
+Starting y: 1
+Direction: Vertical
+Length: 3
+Filled: False
+------------------------------
+------------------------------
+Word: ['_', '_', '_', '_']
+_ at 0, 3
+_ at 1, 3
+_ at 2, 3
+_ at 3, 3
+Starting x: 0
+Starting y: 3
+Direction: Vertical
+Length: 4
+Filled: False
+------------------------------
+------------------------------
+Word: ['_', '_', '_', '_']
+_ at 2, 5
+_ at 3, 5
+_ at 4, 5
+_ at 5, 5
+Starting x: 2
+Starting y: 5
+Direction: Vertical
+Length: 4
+Filled: False
+------------------------------
+------------------------------
+Word: ['S', 'H', 'E', 'L', 'L']
+S at 5, 1
+H at 5, 2
+E at 5, 3
+L at 5, 4
+L at 5, 5
+Starting x: 5
+Starting y: 1
+Direction: Horizontal
+Length: 5
+Filled: True
+------------------------------
+------------------------------
+Word: ['S', 'H', 'E', 'L', 'F']
+S at 0, 0
+H at 0, 1
+E at 0, 2
+L at 0, 3
+F at 0, 4
+Starting x: 0
+Starting y: 0
+Direction: Horizontal
+Length: 5
+Filled: True
+------------------------------
+------------------------------
+Word: ['H', 'E', 'L', 'L']
+H at 2, 5
+E at 3, 5
+L at 4, 5
+L at 5, 5
+Starting x: 2
+Starting y: 5
+Direction: Vertical
+Length: 4
+Filled: True
+------------------------------
+------------------------------
+Word: ['L', 'O', 'S', 'E']
+L at 0, 3
+O at 1, 3
+S at 2, 3
+E at 3, 3
+Starting x: 0
+Starting y: 3
+Direction: Vertical
+Length: 4
+Filled: True
+------------------------------
+------------------------------
+Word: ['Y', 'E', 'S']
+Y at 3, 1
+E at 4, 1
+S at 5, 1
+Starting x: 3
+Starting y: 1
+Direction: Vertical
 Length: 3
 Filled: True
 ------------------------------
 ------------------------------
-Word: ['a', 'r', 'm']
-a at 2, 3
-r at 2, 4
-m at 2, 5
-Starting x: 2
+Word: ['S', 'E', 'E']
+S at 0, 0
+E at 1, 0
+E at 2, 0
+Starting x: 0
+Starting y: 0
+Direction: Vertical
+Length: 3
+Filled: True
+------------------------------
+------------------------------
+Word: ['E', 'Y', 'E']
+E at 3, 3
+Y at 3, 4
+E at 3, 5
+Starting x: 3
 Starting y: 3
 Direction: Horizontal
 Length: 3
@@ -186,8 +232,8 @@ Filled: True
 ## Some things that maybe useful to add
 - Maybe limit looping to a certain number of iterations? :white_check_mark:
 - Maybe add a way to stop the algorithm if it's taking too long? :white_check_mark:
-- Adding more test cases
-- Maybe easily support non-square grids?
+- Adding more test cases :white_check_mark:
+- Maybe easily support non-square grids? :x:
 - Looping for a certain time, find possible puzzles for a pattern and then rate them and pick the best ones :white_check_mark:
 - Sort picked ones by the most intersections :white_check_mark:
 
