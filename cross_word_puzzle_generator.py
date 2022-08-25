@@ -73,10 +73,6 @@ class CrossWordLetter():
     x = -1
     y = -1
 
-    @staticmethod
-    def is_valid_character(character):
-        return character.isalpha() or character in accepted_characters_in_pattern
-
     def __init__(self, character, x, y):
         if not CrossWordLetter.is_valid_character(character):
             raise Exception('Invalid character "%s"' % character)
@@ -84,6 +80,10 @@ class CrossWordLetter():
         self.__character = character
         self.x = x
         self.y = y
+
+    @staticmethod
+    def is_valid_character(character):
+        return character.isalpha() or character in accepted_characters_in_pattern
 
     def is_filled(self):
         return self.__character != "_" and self.__character != ''
