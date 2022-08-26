@@ -26,6 +26,7 @@ Steps of the program
     - Otherwise, the puzzle is solved.
     
 6. Find all available words that can be used to fill the required word.(We call them available words, because they're not repeated, they match the length, and all other already picked answers match with them if they intersect with it in our 2D pattern)
+    - Sort them by any relation you can find between them and the already picked answers.
     - If any word found , pick one as an answer and push it to the answers stack, remove the word from available words, and go to step 5
     - Otherwise, If the answers stack is empty, the puzzle is failed.
         - If answers stack is not empty, pop the last answer from the answers stack, insert it as a required word at the end of required words list again, bring back all the smaller words from the all words list and add them to the available words again, and go to step 5
@@ -40,10 +41,10 @@ python3 cross_word_puzzle_generator.py
 Program that runs
 ``` python
 def main():
-    crossword_puzzle = create_a_level(min_word_length=3, max_word_length=6)
+    crossword_puzzle = create_a_level()
     crossword_puzzle.get_pattern().draw()
-    crossword_puzzle.print_word_placements()
-    crossword_puzzle.print_answers()
+    CrossWordWord.print_words_info(crossword_puzzle.get_pattern().get_mock_words())
+    CrossWordWord.print_words_info(crossword_puzzle.get_answers())
 
 if __name__ == "__main__":
     main()
