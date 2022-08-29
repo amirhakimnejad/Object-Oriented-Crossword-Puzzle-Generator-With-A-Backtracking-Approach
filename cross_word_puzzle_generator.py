@@ -369,11 +369,17 @@ class Crossword():
                 return False
         return True
 
-    def get_list_of_required_letters_to_solve(self):
+    @staticmethod
+    def get_list_of_required_letters_to_solve(level):
+        answers_string = [answer.indexed_string()
+                          for answer in level.get_answers()]
+        return Crossword.get_list_of_required_letters_for_a_list_of_strings(answers_string)
+
+    @staticmethod
+    def get_list_of_required_letters_for_a_list_of_strings(words):
         required_letters = []
-        for word in self.get_answers():
+        for word_string in words:
             all_letters_repeat = Counter(''.join(required_letters))
-            word_string = word.indexed_string()
             word_with_letter_repeat = Counter(word_string)
 
             for letter in set(word_string):
@@ -391,11 +397,13 @@ class Crossword():
     def get_pattern(self):
         return self.__pattern
 
-    def get_json_cartesian(self):
+    @staticmethod
+    def get_json_cartesian(level):
         level_data = {}
         level_data['wordData'] = [word.get_object_cartesian()
-                                  for word in self.__answers]
-        level_data['panLetters'] = self.get_list_of_required_letters_to_solve()
+                                  for word in level.get_answers()]
+        level_data['panLetters'] = Crossword.get_list_of_required_letters_for_a_list_of_strings(
+            words=[word.indexed_string() for word in level.get_answers()])
         return json.dumps(level_data)
 
 
@@ -444,7 +452,7 @@ def create_levels_with_maximum_length(how_many_levels, maximum_length=None):
     while len(levels) < how_many_levels:
         try:
             created_level = create_a_level()
-            if not maximum_length is None and len(created_level.get_list_of_required_letters_to_solve()) >= maximum_length:
+            if not maximum_length is None and len(Crossword.get_list_of_required_letters_to_solve(created_level)) >= maximum_length:
                 continue
             levels.append(created_level)
             print("Created level %d" % len(levels))
@@ -481,7 +489,7 @@ def create_a_level(pattern_to_use=None, words=None):
 def create_json_from_levels_list(levels):
     levels_dict = {}
     for level, i in zip(levels, range(len(levels))):
-        levels_dict[i] = json.loads(level.get_json_cartesian())
+        levels_dict[i] = json.loads(Crossword.get_json_cartesian(level))
     return json.dumps(levels_dict)
 
 
@@ -494,9 +502,11 @@ def save_dictionaries_as_json_files(dictionaries):
     for dictionary, i in zip(dictionaries, range(1, len(dictionaries))):
         save_dictionary_as_json_file(dictionary, 'level%s' % i)
 
+
 def test_all_patterns():
     for i in range(1, 11):
         pattern = CrosswordPattern(load_pattern("pattern%d.txt" % i))
+
 
 def test_all_word_placements():
     placements = []
@@ -504,15 +514,17 @@ def test_all_word_placements():
         pattern = CrosswordPattern(load_pattern("pattern%d.txt" % i))
         placements.extend(pattern.get_mock_words())
 
+
 def main():
     # test_all_patterns()
     # test_all_word_placements()
     # Create one level
     crossword_puzzle = create_a_level()
     crossword_puzzle.get_pattern().draw()
-    CrossWordWord.print_words_info(crossword_puzzle.get_pattern().get_mock_words())
+    CrossWordWord.print_words_info(
+        crossword_puzzle.get_pattern().get_mock_words())
     CrossWordWord.print_words_info(crossword_puzzle.get_answers())
-    print(crossword_puzzle.get_json_cartesian())
+    print(Crossword.get_json_cartesian(crossword_puzzle))
 
     # Create max possible number of levels over time
     # levels = create_levels_over_time(4)
