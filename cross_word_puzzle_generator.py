@@ -409,14 +409,14 @@ class Crossword():
 
 def load_pattern(file_name):
     pattern = []
-    pattern_file = open("patterns/%s" % file_name, "r").readlines()
+    pattern_file = open("%s" % file_name, "r").readlines()
     for line in pattern_file:
         pattern.append([char for char in line.strip()])
     return pattern
 
 
 def load_random_pattern():
-    pattern_name = "pattern%d.txt" % random.randint(1, 10)
+    pattern_name = "patterns/pattern%d.txt" % 1
     return load_pattern(pattern_name)
 
 
