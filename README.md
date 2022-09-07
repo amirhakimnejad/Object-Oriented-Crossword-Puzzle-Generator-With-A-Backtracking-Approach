@@ -237,6 +237,7 @@ Filled: True
 - Maybe easily support non-square grids? :x:
 - Looping for a certain time, find possible puzzles for a pattern and then rate them and pick the best ones :white_check_mark:
 - Sort picked ones by the most intersections :white_check_mark:
+- Sort with most intersections
 
 
 ## *Any issues, comments and pull requests are welcome.*
