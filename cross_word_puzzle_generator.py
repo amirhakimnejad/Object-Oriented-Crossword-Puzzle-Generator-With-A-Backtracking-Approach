@@ -37,7 +37,7 @@ class CrosswordPattern():
     __rows = []
     __size = 0
 
-    def __init__(self, pattern_list):
+    def __init__(self, pattern_list, ignore_max_length=False):
         self.__rows = [[char for char in row] for row in pattern_list]
         self.__size = len(self.__rows)
 
@@ -45,8 +45,11 @@ class CrosswordPattern():
             raise Exception(
                 'Crossword pattern must have at least %s rows.' % MINIMUM_SUPPORTED_LENGTH)
         if self.__size > MAXIMUM_SUPPORTED_LENGTH:
-            raise Exception(
-                'Crossword pattern must have at most %s rows.' % MAXIMUM_SUPPORTED_LENGTH)
+            if ignore_max_length:
+                print("Crossword pattern is too big, ignoring %s" % self.__size)
+            else:
+                raise Exception(
+                    'Crossword pattern must have at most %s rows.' % MAXIMUM_SUPPORTED_LENGTH)
         self.__cols = [[self.__rows[j][i] for j in range(
             len(self.__rows))] for i in range(len(self.__rows[0]))]
 
