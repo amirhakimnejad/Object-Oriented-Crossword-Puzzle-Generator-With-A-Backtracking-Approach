@@ -1,3 +1,4 @@
+from curses.ascii import isalpha
 import random
 import json
 import datetime
@@ -5,7 +6,8 @@ import time
 from collections import Counter
 
 SORT_WITH_SIMILARITY = True
-accepted_characters_in_pattern = ['#', "_"]
+CHARACTER_FOR_BLOCK_CELL = "#"
+CHARACTER_FOR_LETTER_CELL = "_"
 MINIMUM_SUPPORTED_LENGTH = 3
 MAXIMUM_SUPPORTED_LENGTH = 10
 IS_DEBUGGING = True
@@ -37,7 +39,11 @@ class CrosswordPattern():
     __rows = []
     __size = 0
 
-    def __init__(self, pattern_list):
+    def __init__(self, pattern_list, ignore_max_length=False):
+        if pattern_list is str:
+            pattern_list = pattern_list.splitlines()
+        
+        
         self.__rows = [[char for char in row] for row in pattern_list]
         self.__size = len(self.__rows)
 
@@ -45,8 +51,11 @@ class CrosswordPattern():
             raise Exception(
                 'Crossword pattern must have at least %s rows.' % MINIMUM_SUPPORTED_LENGTH)
         if self.__size > MAXIMUM_SUPPORTED_LENGTH:
-            raise Exception(
-                'Crossword pattern must have at most %s rows.' % MAXIMUM_SUPPORTED_LENGTH)
+            if ignore_max_length:
+                print("Crossword pattern is too big, ignoring %s" % self.__size)
+            else:
+                raise Exception(
+                    'Crossword pattern must have at most %s rows.' % MAXIMUM_SUPPORTED_LENGTH)
         self.__cols = [[self.__rows[j][i] for j in range(
             len(self.__rows))] for i in range(len(self.__rows[0]))]
 
@@ -55,9 +64,10 @@ class CrosswordPattern():
                 raise Exception(
                     'Invalid crossword pattern, each row must have the same length')
             for char in row:
-                if char not in accepted_characters_in_pattern:
+                if char != CHARACTER_FOR_BLOCK_CELL and not CHARACTER_FOR_LETTER_CELL and not isalpha(char):
                     raise Exception(
-                        'Invalid crossword pattern, only %s are allowed not -%s-' % (','.join(accepted_characters_in_pattern), char))
+                        'Invalid crossword pattern, only %s, %s and alphabet are allowed not -%s-'
+                        % (CHARACTER_FOR_BLOCK_CELL, CHARACTER_FOR_LETTER_CELL, char))
 
         if len(self.__cols) != self.__size:
             raise Exception(
@@ -146,7 +156,7 @@ class CrossWordLetter():
 
     @staticmethod
     def is_valid_character(character):
-        return character.isalpha() or character in accepted_characters_in_pattern
+        return character.isalpha() or character in [CHARACTER_FOR_BLOCK_CELL, CHARACTER_FOR_LETTER_CELL]
 
     def is_filled(self):
         return self.__character != "_" and self.__character != ''
@@ -331,21 +341,17 @@ class Crossword():
     __sorted_words_placements = []
     __pattern = None
     __answers = []
-    __solutions = []
-    __length = -1
 
-    def __init__(self, pattern, all_possible_answers):
+    def __init__(self, pattern, all_possible_answers=None, ignore_max_length=False):
         self.__sorted_words_placements = []
         self.__answers = []
-        self.__solutions = []
-        self.__pattern = pattern
-        self.__length = self.__pattern.get_size()
-        self.__sorted_words_placements = [
-            word for word in self.__pattern.get_mock_words()]
-        self.__sorted_words_placements.sort(
-            key=lambda x: x.get_length(), reverse=False)
-        self.fill_answers(all_possible_answers,
-                          [word for word in all_possible_answers], self.__answers)
+        self.__pattern = pattern if isinstance(pattern, CrosswordPattern) else CrosswordPattern(pattern, ignore_max_length=ignore_max_length)
+        self.__sorted_words_placements = [word for word in self.__pattern.get_mock_words()]
+        self.__sorted_words_placements.sort(key=lambda x: x.get_length(), reverse=False)
+        if all_possible_answers is not None: 
+            self.fill_answers(all_possible_answers, [word for word in all_possible_answers], self.__answers)
+        else:
+            self.__answers = self.__pattern.get_mock_words()
 
     def fill_answers(self, all_possible_answers, available_possible_answers, answers_stack=[], debug=IS_DEBUGGING, changed=False):
         if debug and changed:
